@@ -14,7 +14,7 @@ OBJS := $(patsubst $(SRC_DIR)/%, $(OBJ_DIR)/%, $(SRCS:.cc=.o))
 DEPS := $(OBJS:.o=.d)
 
 # Target name
-TARGET := a.out
+TARGET := mdbg
 
 .PHONY: all clean debug
 
