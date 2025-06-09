@@ -7,7 +7,7 @@ SRC_DIR := src
 OBJ_DIR := build
 
 # Find all .cc source files (recursively)
-SRCS := $(shell find $(SRC_DIR) -name '*.cc' ! -path '$(SRC_DIR)/testing/*')
+SRCS := $(shell find $(SRC_DIR) -name '*.cc')
 
 # Convert each source file path to its matching object file path
 OBJS := $(patsubst $(SRC_DIR)/%, $(OBJ_DIR)/%, $(SRCS:.cc=.o))

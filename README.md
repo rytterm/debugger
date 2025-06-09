@@ -18,8 +18,6 @@ A debugger for written in c++ working for linux.
 
 Uitlity inside the program will be steadily updated.
 
-
-
 Currently avaliable:
 
 continue/cont/c - Continue execution of program.
