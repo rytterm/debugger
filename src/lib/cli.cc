@@ -9,12 +9,16 @@
 
 
 constexpr char ARROW        {'\x1b'};
+constexpr char UP           {'A'};
+constexpr char DOWN         {'B'};
+constexpr char RIGHT        {'C'};
+constexpr char LEFT         {'D'};
 constexpr char BACKSPACE    {127};
 
 
 static std::vector<std::string> history;
 static unsigned int             history_index {};
-
+static unsigned long            col {};
 
 
 // Disable/enable ICANON/ECHO
@@ -36,37 +40,86 @@ static void cliClearLine() {
 }
 
 
-// Handle up/down
-static void handleud(const std::string& prompt, std::string& line) {
+
+static void uarrow(const std::string& prompt, std::string& line) {
+    if (history_index != 0) {
+        history_index--;
+        line = history.at(history_index);
+        cliClearLine();
+        std::cout << prompt << line << std::flush;
+    }
+}
+
+
+
+static void darrow(const std::string& prompt, std::string& line) {
+    if (!history.empty() && history_index != history.size() - 1) {
+        history_index++;
+        line = history.at(history_index);
+        cliClearLine();
+        std::cout << prompt << line << std::flush;
+    } else {
+        cliClearLine();
+        line = "";
+        std::cout << prompt << std::flush;
+    }
+}
+
+static void rarrow(std::string& line) {
+    if (col < line.size()) {
+        std::cout << "\x1b[C" << std::flush;
+        col++;
+    }
+}
+
+static void larrow() {
+    if (col > 0)  {
+        std::cout << "\x1b[D" << std::flush;
+        col--;
+    }    
+}
+
+
+
+
+static void handlearrow(const std::string& prompt, std::string& line) {
     char seq[2];
-    if (read(STDIN_FILENO, &seq[0], 1) == 1 && read(STDIN_FILENO, &seq[1], 1) == 1) {
-        if (seq[0] == '[' && seq[1] == 'A') {
-            // Up arrow
-            if (history_index != 0) {
-                history_index--;
-                line = history.at(history_index);
-                cliClearLine();
-                std::cout << prompt << line << std::flush;
-            }
-        } else if (seq[0] == '[' && seq[1] == 'B') {
-            // Down arrow 
-            if (history_index != history.size() - 1) {
-                history_index++;
-                line = history.at(history_index);
-                cliClearLine();
-                std::cout << prompt << line << std::flush;
-            } else {
-                cliClearLine();
-                std::cout << prompt << std::flush;
-            }
+    if (read(STDIN_FILENO, &seq[0], 1) == 1 && read(STDIN_FILENO, &seq[1], 1) == 1 && seq[0] == '[') {
+        switch(seq[1]) {
+            case UP:    
+                uarrow(prompt, line); 
+                break;
+            case DOWN:  
+                darrow(prompt, line);
+                break;
+            case RIGHT:
+                rarrow(line);
+                break;
+            case LEFT:  
+                larrow();
+                break;
+            default:
+                std::cerr << "Invalid input for arrow handler";
+                std::abort();
         }
     }
+/*
+        if (seq[0] == '[' && seq[1] == 'A')
+            uarrow(prompt, line);
+        else if (seq[0] == '[' && seq[1] == 'B')
+            darrow(prompt, line);
+        else if (*seq == LEFT && col > 0) {
+            col--;
+            std::cout << ARROW << LEFT << std::flush;
+        } else if (*seq == )
+    }*/
 }
 
 
 // Handle backspace
 static void handleback(std::string& line) {
-    if (!line.empty()) {
+    if (col > 0) {
+        col--;
         line.pop_back();
         std::cout << "\b \b" << std::flush;
         if (!history.empty())
@@ -77,6 +130,7 @@ static void handleback(std::string& line) {
 
 // Handle a regular command
 static void handlereg(std::string& line, const char c) {
+    col++;
     line.push_back(c);
     std::cout << c << std::flush;
 }
@@ -85,14 +139,13 @@ static void handlereg(std::string& line, const char c) {
 
 std::string cliInput(const std::string& prompt) {
     std::string line;
-
     char c;
     setraw(true);
     std::cout << prompt << std::flush;
 
     while (read(STDIN_FILENO, &c, 1) == 1 && c != '\n') {
         if (c == ARROW)
-            handleud(prompt,line);
+            handlearrow(prompt,line);
         else if (c == BACKSPACE)
             handleback(line);
         else
