@@ -9,12 +9,20 @@ Breakpoint::Breakpoint(pid_t pid, std::intptr_t addr)
 
 
 void Breakpoint::enable() {
-    long data = ptrace(PTRACE_PEEKDATA, pid_, addr_, nullptr);
+    long data {ptrace(PTRACE_PEEKDATA, pid_, addr_, nullptr)};
     data_ = static_cast<uint8_t>(data & 0xff);
     uint64_t i3 {0xcc};
     uint64_t i3data {((data & ~0xff) | i3)};
     ptrace(PTRACE_POKEDATA, pid_, addr_, i3data);
     enabled_ = true;
+}
+
+
+void Breakpoint::disable() {
+    long data {ptrace(PTRACE_PEEKDATA, pid_, addr_, nullptr)};
+    long resdata {((data & ~0xff) | data_)};
+    ptrace(PTRACE_POKEDATA, pid_, addr_, resdata);
+    enabled_ = false;
 }
 
 

@@ -5,8 +5,8 @@
 
 class Breakpoint {
 public:
-    Breakpoint(pid_t pid, std::intptr_t addr);
-
+    Breakpoint() = default;
+    Breakpoint(pid_t, std::intptr_t);
 
     void            enable();
     void            disable();
