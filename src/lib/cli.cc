@@ -86,7 +86,9 @@ std::string cliInput(const std::string& prompt) {
     std::cout << prompt << std::flush;
 
     while (read(STDIN_FILENO, &c, 1) == 1 && c != '\n') {
-        if (c == '\x1b')
+        if (c == '\0' || isspace(c))
+            continue;
+        else if (c == '\x1b')
             handleud(prompt,line);
         else if (c == 127 || c == 8)
             handleback(line);
@@ -96,6 +98,8 @@ std::string cliInput(const std::string& prompt) {
     setraw(false);
     std::cout << std::endl;
 
+    if (line.empty())
+        return "ignore";
 
     return line;
 }

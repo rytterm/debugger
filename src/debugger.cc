@@ -21,9 +21,11 @@ void Debugger::run() const {
     std::string line {};
 
     while ((line = cliInput("mdbg> ")) != "q") {
-        handlecmd_(line);
-        cliAddHistory(line);
-        displayHistory();
+        if (line != "ignore") {
+            handlecmd_(line);
+            cliAddHistory(line);
+            displayHistory();
+        }
     }
 
 }
@@ -36,8 +38,6 @@ void Debugger::handlecmd_(const std::string& line) const {
 
     if (is_prefix(command, "c") || is_prefix(command, "cont") || is_prefix(command, "continue"))
         cexec_();
- //   else if (is_prefix(command, "q") || is_prefix(command, "quit"))
-   //     std::exit(EXIT_SUCCESS);
     else 
         std::cerr << "Unknown command\n";
 }
