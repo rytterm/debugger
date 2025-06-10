@@ -29,8 +29,6 @@ int main(int argc, char** argv) {
 
         dbg.run();
 
-
-
     } else {
         std::cerr << "Invalid child process id:" << pid << std::endl;
         return -1;

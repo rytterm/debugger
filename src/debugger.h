@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 class Debugger {
 public:
     Debugger(std::string process, pid_t pid);
@@ -16,3 +15,5 @@ private:
     void handlecmd_(const std::string&) const;
     void cexec_() const;
 };
+
+
