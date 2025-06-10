@@ -20,9 +20,10 @@ void Debugger::run() const {
 
     std::string line {};
 
-    while ((line = cliInput("\nmdbg> ")) != "") {
+    while ((line = cliInput("mdbg> ")) != "q") {
         handlecmd_(line);
         cliAddHistory(line);
+        displayHistory();
     }
 
 }
@@ -34,14 +35,16 @@ void Debugger::handlecmd_(const std::string& line) const {
 
 
     if (is_prefix(command, "c") || is_prefix(command, "cont") || is_prefix(command, "continue"))
-        contexec();
+        cexec_();
+ //   else if (is_prefix(command, "q") || is_prefix(command, "quit"))
+   //     std::exit(EXIT_SUCCESS);
     else 
         std::cerr << "Unknown command\n";
 }
 
 
 
-void Debugger::contexec() const {
+void Debugger::cexec_() const {
     ptrace(PTRACE_CONT, pid_, nullptr, nullptr);
 
     int wstatus;

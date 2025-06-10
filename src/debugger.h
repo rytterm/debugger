@@ -14,5 +14,5 @@ private:
     pid_t       pid_;
 
     void handlecmd_(const std::string&) const;
-    void contexec() const;
+    void cexec_() const;
 };
