@@ -68,11 +68,8 @@ uint64_t get_reg_value(pid_t, Reg);
 // user_regs_struct has a standard layout
 void set_reg_value(pid_t, Reg, uint64_t);
 
-// Get register value from dwarf register
 uint64_t dwarf_get_reg(pid_t, unsigned);
 
-// Get register name
 std::string get_reg_name(Reg);
 
-// Get register from name
 Reg name_get_reg(const std::string&);

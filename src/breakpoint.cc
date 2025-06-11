@@ -28,10 +28,16 @@ void Breakpoint::disable() {
 
 
 
-constexpr bool Breakpoint::is_enabled() const {
+bool Breakpoint::is_enabled() const {
     return enabled_;
 }
 
 std::intptr_t Breakpoint::getaddr() const {
     return addr_;
+}
+
+
+
+void Breakpoint::setpid(pid_t pid) {
+    pid_ = pid;
 }

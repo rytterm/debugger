@@ -11,8 +11,10 @@ public:
     void            enable();
     void            disable();
 
-    constexpr bool  is_enabled() const;
+    bool            is_enabled() const;
     std::intptr_t   getaddr() const;
+
+    void setpid(pid_t);
 
 
 private:

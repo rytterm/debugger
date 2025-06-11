@@ -1,6 +1,7 @@
 #ifdef __linux__
 #include "debugger.h"
 #include <sys/ptrace.h>
+#include <sys/personality.h>
 #endif
 
 #include <iostream>
@@ -28,13 +29,15 @@ int main(int argc, char** argv) {
 
     char* process {argv[1]};
 
-    pid_t pid {fork()};
+    //pid_t pid {fork()};
 
-    if (pid == 0) {
+    Debugger dbg {process, -1};
+    dbg.run();
 
+/*    if (pid == 0) {
+        personality(ADDR_NO_RANDOMIZE);
         ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
         execl(process, process, nullptr);
-
     } else if (pid >= 1) {
 
         std::cout << "Debugger entered:" << std::endl 
@@ -47,6 +50,6 @@ int main(int argc, char** argv) {
     } else {
         std::cerr << "Invalid child process id:" << pid << std::endl;
         return -1;
-    }
+    }*/
 
 }
