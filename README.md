@@ -4,16 +4,17 @@ A debugger for written in c++ working for linux.
 
 
 # Build
-
-1. git clone https://github.com/rytterm/debugger.git ~/mdbg
-2. cd ~/mdbg/
-3. make
-
+```
+git clone https://github.com/rytterm/debugger.git ~/mdbg
+cd ~/mdbg/
+make
+```
 # Running
 
-1. cd ~/mdbg/
-2. ./mdbg [target]
-
+```
+cd ~/mdbg/
+./mdbg [target]
+```
 # Utility
 
 Uitlity inside the program will be steadily updated.
