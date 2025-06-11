@@ -1,11 +1,26 @@
-#include <iostream>
-#include <unistd.h>
+#ifdef __linux__
 #include "debugger.h"
 #include <sys/ptrace.h>
+#endif
+
+#include <iostream>
+#include <unistd.h>
 #include <iomanip>
 
 
+
+
 int main(int argc, char** argv) {
+
+#ifndef __linux__
+    std::cerr << "Must be on linux" << std::endl;
+    return -1;
+#endif
+#ifndef __x86_64__
+    std::cerr << "Must be on 64 bit architecture" << std::endl;
+    return -1;
+#endif
+    
     if (argc < 2)  {
         std::cerr << "Program not specified." << std::endl;
         return -1;

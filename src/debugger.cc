@@ -32,8 +32,8 @@ void Debugger::run() {
 
 
 void Debugger::handlecmd_(const std::string& line) {
-    auto args = split(line,' ');
-    auto command = args[0];
+    std::vector<std::string> args = split(line,' ');
+    std::string command = args[0];
 
 
     if (is_prefix(command, "c") || is_prefix(command, "cont") || is_prefix(command, "continue"))

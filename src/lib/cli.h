@@ -3,7 +3,7 @@
 #include <string>
 
 
-/* Handle command-line input character by character */
+// Handle command-line input character by character
 std::string cliInput(const std::string&);
 
 // Add a command-line to the history, used for up/down arrow.

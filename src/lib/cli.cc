@@ -17,8 +17,8 @@ constexpr char BACKSPACE    {127};
 
 
 static std::vector<std::string> history;
-static unsigned int             history_index {};
-static unsigned long            col {};
+static unsigned                 history_index {};
+static unsigned                 col {};
 
 
 // Disable/enable ICANON/ECHO
@@ -103,16 +103,6 @@ static void handlearrow(const std::string& prompt, std::string& line) {
                 std::abort();
         }
     }
-/*
-        if (seq[0] == '[' && seq[1] == 'A')
-            uarrow(prompt, line);
-        else if (seq[0] == '[' && seq[1] == 'B')
-            darrow(prompt, line);
-        else if (*seq == LEFT && col > 0) {
-            col--;
-            std::cout << ARROW << LEFT << std::flush;
-        } else if (*seq == )
-    }*/
 }
 
 
