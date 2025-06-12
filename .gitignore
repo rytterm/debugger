@@ -5,3 +5,4 @@ build/
 *.swp
 mdbg
 testing/
+a.out
