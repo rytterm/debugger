@@ -2,7 +2,6 @@
 
 A debugger for written in c++ working for linux.
 
-
 # Build
 ```
 git clone https://github.com/rytterm/debugger.git ~/mdbg
