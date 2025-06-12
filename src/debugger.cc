@@ -8,11 +8,16 @@
 #include "lib/reg.h"
 #include <iomanip>
 #include <sys/personality.h>
+#include <fcntl.h>
 
 
 Debugger::Debugger(char* process, pid_t pid)
         : process_ {std::move(process)}, pid_ {pid}
-{}
+{
+    int fd {open(process_, O_RDONLY)};
+    elf_ = elf::elf{elf::create_mmap_loader(fd)};
+    dwarf_ = dwarf::dwarf{dwarf::elf::create_loader(elf_)};
+}
 
 void Debugger::run() {
 
@@ -71,8 +76,8 @@ void Debugger::handlecmd_(const std::string& line) {
 
 
 void Debugger::cexec_() {
-    waitsig_();
     ptrace(PTRACE_CONT, pid_, nullptr, nullptr);
+    waitsig_();
 }
 
 

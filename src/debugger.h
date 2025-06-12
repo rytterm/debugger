@@ -3,6 +3,8 @@
 #include <string>
 #include "breakpoint.h"
 #include <unordered_map>
+#include <libelfin/elf/elf++.hh>
+#include <libelfin/dwarf/dwarf++.hh>
 
 
 class Debugger {
@@ -12,8 +14,11 @@ public:
     void run();
     
 private:
-    char*       process_;
-    pid_t       pid_;
+    char*           process_;
+    pid_t           pid_;
+
+    elf::elf        elf_;    
+    dwarf::dwarf    dwarf_;
     
     std::unordered_map<std::intptr_t,Breakpoint> breakpoints_;
     
