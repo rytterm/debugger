@@ -27,7 +27,7 @@ void Debugger::run() {
             //displayHistory();
         }
     }
-    kill(pid_, SIGKILL);
+    //kill(pid_, SIGKILL);
 }
 
 
@@ -71,9 +71,8 @@ void Debugger::handlecmd_(const std::string& line) {
 
 
 void Debugger::cexec_() {
-    skipbp_();
-    ptrace(PTRACE_CONT, pid_, nullptr, nullptr);
     waitsig_();
+    ptrace(PTRACE_CONT, pid_, nullptr, nullptr);
 }
 
 
@@ -81,9 +80,9 @@ void Debugger::cexec_() {
 void Debugger::setbp_(std::intptr_t addr) {
     std::cout << "Set breakpoint at 0x" << std::hex << addr << std::endl;
     Breakpoint bp {pid_, addr};
-    breakpoints_[addr] = bp;
     if (pid_ > 0)
         bp.enable();
+    breakpoints_[addr] = bp;
 }
 
 
@@ -134,10 +133,11 @@ void Debugger::skipbp_() {
 }
 
 
-void Debugger::waitsig_() const {
+void Debugger::waitsig_() {
     int wstatus;
     int options {};
     waitpid(pid_, &wstatus, options);
+    skipbp_();
 }
 
 
@@ -157,5 +157,6 @@ void Debugger::launch_target_() {
             bp.setpid(pid_);  // if Breakpoint needs an updated PID
             bp.enable();       // actually writes 0xCC
         }
+        cexec_();
     }
 }

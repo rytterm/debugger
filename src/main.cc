@@ -29,12 +29,14 @@ int main(int argc, char** argv) {
 
     char* process {argv[1]};
 
+
+    //std::cout << process;
     //pid_t pid {fork()};
 
     Debugger dbg {process, -1};
     dbg.run();
-
-/*    if (pid == 0) {
+/*
+    if (pid == 0) {
         personality(ADDR_NO_RANDOMIZE);
         ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
         execl(process, process, nullptr);
@@ -50,6 +52,6 @@ int main(int argc, char** argv) {
     } else {
         std::cerr << "Invalid child process id:" << pid << std::endl;
         return -1;
-    }*/
-
+    }
+*/
 }

@@ -36,7 +36,7 @@ private:
 
     void skipbp_();
 
-    void waitsig_() const;
+    void waitsig_();
 
     void launch_target_();
 };
