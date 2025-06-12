@@ -6,44 +6,41 @@
 #include <libelfin/elf/elf++.hh>
 #include <libelfin/dwarf/dwarf++.hh>
 
-
-class Debugger {
+class Debugger
+{
 public:
-    Debugger(char*, pid_t);
+  Debugger(char *, pid_t);
 
-    void run();
-    
+  void run();
+
 private:
-    char*           process_;
-    pid_t           pid_;
+  char *process_;
+  pid_t pid_;
 
-    elf::elf        elf_;    
-    dwarf::dwarf    dwarf_;
-    
-    std::unordered_map<std::intptr_t,Breakpoint> breakpoints_;
-    
-    void regdump_() const;
+  elf::elf elf_;
+  dwarf::dwarf dwarf_;
 
-    void handlecmd_(const std::string&);
-    
-    // Continue execution
-    void cexec_();
+  std::unordered_map<std::intptr_t, Breakpoint> breakpoints_;
 
-    // Set breakpoint at address addr
-    void setbp_(std::intptr_t);
+  void regdump_() const;
 
-    uint64_t readmem_(uint64_t) const;
-    void writemem_(uint64_t, uint64_t) const; 
+  void handlecmd_(const std::string &);
 
+  // Continue execution
+  void cexec_();
 
-    uint64_t getpc_() const;
-    void setpc_(uint64_t) const;
+  // Set breakpoint at address addr
+  void setbp_(std::intptr_t);
 
-    void skipbp_();
+  uint64_t readmem_(uint64_t) const;
+  void writemem_(uint64_t, uint64_t) const;
 
-    void waitsig_();
+  uint64_t getpc_() const;
+  void setpc_(uint64_t) const;
 
-    void launch_target_();
+  void skipbp_();
+
+  void waitsig_();
+
+  void launch_target_();
 };
-
-

@@ -20,4 +20,11 @@ Uitlity inside the program will be steadily updated.
 
 Currently avaliable:
 
-continue/cont/c - Continue execution of program.
+run               - Start the program an run it.
+continue          - Continue execution of program.
+quit              - Exit the program.
+
+
+# Dependencies
+
+https://github.com/aclements/libelfin 
