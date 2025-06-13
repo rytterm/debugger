@@ -12,7 +12,7 @@ Makefile
 *.a
 *.out
 *.exe
-debugger  # your binary, if it's built in the root folder
+debugger
 
 # IDE / Editor files
 *.swp
