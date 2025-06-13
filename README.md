@@ -1,6 +1,6 @@
 # Debugger
 
-A debugger for written in c++ working for linux.
+A debugger for written in c++ working for linux x86_64.
 
 # Build
 ```

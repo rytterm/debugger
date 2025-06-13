@@ -17,43 +17,52 @@ void read_header(char* fname) {
 
   Elf64_Ehdr header;
   
-  size_t size = fread(&header, 1, sizeof(Elf64_Ehdr), f);
+  fread(&header, 1, sizeof(Elf64_Ehdr), f);
   
   fclose(f);
   
-  if (size != sizeof(Elf64_Ehdr)) 
-    PANIC("Failed to read complete ELF header from: %s", fname);
-
   verify_header(&header);
 }
 
 
-
 static void verify_header(const Elf64_Ehdr* header) {
   
-  print_header(header); 
+  //print_header(header);
 
   if (header->e_ident[EI_MAG0] != ELFMAG0 || header->e_ident[EI_MAG1] != ELFMAG1 || 
       header->e_ident[EI_MAG2] != ELFMAG2 || header->e_ident[EI_MAG3] != ELFMAG3)
     PANIC("Invalid ELF file");
-  
-  else if (header->e_machine != EM_X86_64)
-    PANIC("Unsupported ELF architecture (must be EM_X86_64)");
 
-  else if (header->e_version != EV_CURRENT)
-    PANIC("Inavlid ELF version");
-
-  else if (header->e_ident[EI_CLASS] != ELFCLASS64)
+    else if (header->e_ident[EI_CLASS] != ELFCLASS64)
     PANIC("Unsupported ELF class (must be 64 bit)");
 
   else if (header->e_ident[EI_DATA] != ELFDATA2LSB)
     PANIC("Unsupported ELF byte order (must be little endian)");
 
-  else if (header->e_ident[EI_OSABI] != ELFOSABI_SYSV && header->e_ident != ELFOSABI_LINUX)
-    PANIC("Unspecified ELF OS ABI (must be SYSV/Linux)");
+  else if (header->e_ident[EI_OSABI] != ELFOSABI_SYSV && header->e_ident[EI_OSABI] != ELFOSABI_LINUX)
+    PANIC("Unsupported ELF OS ABI (must be SYSV/Linux)");
+    
+  else if (header->e_type != ET_EXEC && header->e_type != ET_DYN)
+    PANIC("Unsupported ELF file type (must be executable)");
+  
+  else if (header->e_machine != EM_X86_64)
+    PANIC("Unsupported ELF architecture (must be EM_X86_64)");
 
-  else if (header->e_type == ET_NONE)
-    PANIC("No ELF type");
+  else if (header->e_version != EV_CURRENT)
+    PANIC("Unsupported ELF version (must be 1)");
+
+  else if (header->e_entry == 0)
+    PANIC("ELF entry point is NULL");
+
+  else if (header->e_ehsize != sizeof(Elf64_Ehdr))
+    PANIC("Invalid ELF header size");
+
+  else if (header->e_phentsize != sizeof(Elf64_Phdr))
+    PANIC("Invalid program header entry size");
+
+  else if (header->e_shentsize != sizeof(Elf64_Shdr))
+    PANIC("Invalid section header entry size");
+
 }
 
 
