@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "breakpoint.h"
+#include "breakpoint.hh"
 #include <unordered_map>
 
 class Debugger

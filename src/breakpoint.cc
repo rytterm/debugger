@@ -1,4 +1,4 @@
-#include "../include/breakpoint.h"
+#include "../include/breakpoint.hh"
 #include <sys/ptrace.h>
 
 Breakpoint::Breakpoint(pid_t pid, std::intptr_t addr)

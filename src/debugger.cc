@@ -1,11 +1,11 @@
-#include "debugger.h"
+#include "../include/debugger.hh"
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "../include/cli.h"
-#include "../include/utils.h"
+#include "../include/cli.hh"
+#include "../include/utils.hh"
 #include <iostream>
 #include <sys/ptrace.h>
-#include "../include/reg.h"
+#include "../include/reg.hh"
 #include <iomanip>
 #include <sys/personality.h>
 #include <fcntl.h>
