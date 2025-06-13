@@ -1,5 +1,5 @@
-#ifndef _LIB_DEBUG_H
-#define _LIB_DEBUG_H
+#ifndef __INCLUDE_DEBUG_H
+#define __INCLUDE_DEBUG_H
 
 
 #ifdef __cplusplus
@@ -16,12 +16,21 @@ extern "C" {
 
 
 
-void debug_panic (const char* file, int line, const char* func,
-                  const char* msg, ...) PRINTF_FORMAT(4, 5) NO_RETURN;
+void debug_panic (const char*, int, const char*, const char*, ...) 
+                  PRINTF_FORMAT(4, 5) NO_RETURN;
 
 
 
 
+
+#ifdef NDEBUG
+#define ASSERT(COND) (void(0))
+#else
+#define ASSERT(COND) \
+  do { \
+    if (!(COND)) PANIC("Assertion %s failed", #COND); \
+  } while (0)
+#endif
 
 
 

@@ -1,33 +1,93 @@
 #include "../../include/dwelf/elf.h"
 #include "../../include/debug.h"
-#include <stdio.h>
 #include <stdlib.h>
-#include <elf.h>
+
 
 
 static void verify_header(const Elf64_Ehdr* header);
 static void print_header(const Elf64_Ehdr* header);
 
 
-void read_header(char* fname) {
-  FILE* f = fopen(fname, "rb");
 
+
+
+ElfFile* elf_init(char* fname) {
+  
+  FILE* f = fopen(fname, "rb");
   if (f == NULL)
     PANIC("Could not open file: %s", fname);
 
-  Elf64_Ehdr header;
-  
-  fread(&header, 1, sizeof(Elf64_Ehdr), f);
-  
-  fclose(f);
-  
-  verify_header(&header);
+
+  const Elf64_Ehdr* header  = read_header(f);
+  const Elf64_Phdr* phdrs   = read_phdrs(header, f);
+  const Elf64_Shdr* shdrs   = read_shdrs(header, f);
+
+
+
+
+  free((void*)header);
+  free((void*)phdrs);
+  free((void*)phdrs);
 }
+
+
+
+
+const Elf64_Ehdr* read_header(FILE* f) {
+  Elf64_Ehdr* header = malloc(sizeof(Elf64_Ehdr));
+  if (header == NULL)
+    PANIC("Memory allocation for ELF header failed");
+  
+  if (fread(header, 1, sizeof(Elf64_Ehdr), f) != sizeof(Elf64_Ehdr))
+    PANIC("Failed to read complete ELF header");
+  
+  verify_header(header);
+
+  return header;
+}
+
+
+
+const Elf64_Phdr* read_phdrs(const Elf64_Ehdr* header, FILE* f) {
+  fseek(f, header->e_phoff, SEEK_SET);
+
+  Elf64_Phdr* phdrs = malloc(header->e_phnum * header->e_phentsize);
+  
+  if (phdrs == NULL)
+    PANIC("Memory allocation for ELF program headers failed");
+
+  if (fread(phdrs, header->e_phentsize, header->e_phnum, f) != header->e_phnum)
+    PANIC("Failed to read all program headers");
+  
+  return phdrs;
+}
+
+
+
+const Elf64_Shdr* read_shdrs(const Elf64_Ehdr* header, FILE* f) {
+  fseek(f, header->e_shoff, SEEK_SET);
+  
+  Elf64_Shdr* shdrs = malloc(header->e_shnum * header->e_shentsize);
+
+  if (shdrs == NULL)
+    PANIC("Memory allocation for ELF section headers failed");
+
+  if (fread(shdrs, header->e_shentsize, header->e_shnum, f) != header->e_shnum)
+    PANIC("Failed to read all section headers");
+
+  return shdrs;
+}
+
+
+
+
+
+
+
 
 
 static void verify_header(const Elf64_Ehdr* header) {
   
-  //print_header(header);
 
   if (header->e_ident[EI_MAG0] != ELFMAG0 || header->e_ident[EI_MAG1] != ELFMAG1 || 
       header->e_ident[EI_MAG2] != ELFMAG2 || header->e_ident[EI_MAG3] != ELFMAG3)

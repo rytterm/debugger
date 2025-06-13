@@ -1,5 +1,4 @@
-#if defined(__linux__) && defined(__x86_64__)
-#else
+#if !defined(__linux__) || !defined(__x86_64__)
 #error "Must be on linux x86_64"
 #endif
 
@@ -17,7 +16,7 @@
 int main(int argc, char **argv)
 {
 
-  read_header(argv[1]);
+  elf_init(argv[1]);
 
   if (argc < 2)
   {
