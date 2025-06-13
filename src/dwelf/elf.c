@@ -1,5 +1,5 @@
 #include "../../include/dwelf/elf.h"
-#include "../../lib/debug.h"
+#include "../../include/debug.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <elf.h>

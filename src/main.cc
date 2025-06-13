@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <iomanip>
 #include "../include/dwelf/elf.h"
-#include "../lib/debug.h"
+#include "../include/debug.h"
 
 
 int main(int argc, char **argv)
