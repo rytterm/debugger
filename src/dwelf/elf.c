@@ -25,9 +25,9 @@ ElfFile* elf_init(char* fname) {
 
 
 
-  free((void*)header);
-  free((void*)phdrs);
-  free((void*)phdrs);
+//  free((void*)header);
+//  free((void*)phdrs);
+//  free((void*)phdrs);
 }
 
 

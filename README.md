@@ -30,3 +30,7 @@ break     - Set breakpoint
 
 quit      - Exit the program.
 
+
+# Dependencies
+
+libdwarf
