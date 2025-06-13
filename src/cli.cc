@@ -1,4 +1,4 @@
-#include "cli.h"
+#include "../include/cli.h"
 #include <unistd.h>
 #include <termios.h>
 #include <iostream>

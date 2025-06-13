@@ -1,22 +1,18 @@
 #include "debugger.h"
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "lib/cli.h"
-#include "lib/utils.h"
+#include "../include/cli.h"
+#include "../include/utils.h"
 #include <iostream>
 #include <sys/ptrace.h>
-#include "lib/reg.h"
+#include "../include/reg.h"
 #include <iomanip>
 #include <sys/personality.h>
 #include <fcntl.h>
 
 Debugger::Debugger(char *process, pid_t pid)
     : process_{std::move(process)}, pid_{pid}
-{
-  int fd{open(process_, O_RDONLY)};
-  elf_ = elf::elf{elf::create_mmap_loader(fd)};
-  dwarf_ = dwarf::dwarf{dwarf::elf::create_loader(elf_)};
-}
+{}
 
 void Debugger::run()
 {

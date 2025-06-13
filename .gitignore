@@ -1,8 +1,27 @@
-build/
+# Build artifacts
+/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Compiled binaries
 *.o
-*.d
-.vscode/
+*.obj
+*.so
+*.a
+*.out
+*.exe
+debugger  # your binary, if it's built in the root folder
+
+# IDE / Editor files
 *.swp
-mdbg
+*.swo
+*.user
+*.vcxproj*
+.idea/
+.vscode/
+*.DS_Store
+
+# Personal testing folder
 testing/
-a.out

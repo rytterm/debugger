@@ -24,7 +24,3 @@ run               - Start the program an run it.
 continue          - Continue execution of program.
 quit              - Exit the program.
 
-
-# Dependencies
-
-https://github.com/aclements/libelfin 

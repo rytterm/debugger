@@ -1,4 +1,4 @@
-#include "reg.h"
+#include "../include/reg.h"
 #include <sys/user.h>
 #include <sys/ptrace.h>
 #include <algorithm>
