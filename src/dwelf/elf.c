@@ -4,8 +4,8 @@
 
 
 
-static void verify_header(const Elf64_Ehdr* header);
-static void print_header(const Elf64_Ehdr* header);
+static void verify_ehdr(const Elf64_Ehdr* ehdr);
+static void print_ehdr(const Elf64_Ehdr* ehdr);
 
 
 
@@ -18,64 +18,58 @@ ElfFile* elf_init(char* fname) {
     PANIC("Could not open file: %s", fname);
 
 
-  const Elf64_Ehdr* header  = read_header(f);
-  const Elf64_Phdr* phdrs   = read_phdrs(header, f);
-  const Elf64_Shdr* shdrs   = read_shdrs(header, f);
+  const Elf64_Ehdr* ehdr  = read_ehdr(f);
+  const Elf64_Phdr* phdr   = read_phdr(ehdr, f);
+  const Elf64_Shdr* shdr   = read_shdr(ehdr, f);
 
-
-
-
-//  free((void*)header);
-//  free((void*)phdrs);
-//  free((void*)phdrs);
 }
 
 
 
 
-const Elf64_Ehdr* read_header(FILE* f) {
-  Elf64_Ehdr* header = malloc(sizeof(Elf64_Ehdr));
-  if (header == NULL)
+const Elf64_Ehdr* read_ehdr(FILE* f) {
+  Elf64_Ehdr* ehdr = malloc(sizeof(Elf64_Ehdr));
+  if (ehdr == NULL)
     PANIC("Memory allocation for ELF header failed");
   
-  if (fread(header, 1, sizeof(Elf64_Ehdr), f) != sizeof(Elf64_Ehdr))
+  if (fread(ehdr, 1, sizeof(Elf64_Ehdr), f) != sizeof(Elf64_Ehdr))
     PANIC("Failed to read complete ELF header");
   
-  verify_header(header);
+  verify_ehdr(ehdr);
 
-  return header;
+  return ehdr;
 }
 
 
 
-const Elf64_Phdr* read_phdrs(const Elf64_Ehdr* header, FILE* f) {
-  fseek(f, header->e_phoff, SEEK_SET);
+const Elf64_Phdr* read_phdr(const Elf64_Ehdr* ehdr, FILE* f) {
+  fseek(f, ehdr->e_phoff, SEEK_SET);
 
-  Elf64_Phdr* phdrs = malloc(header->e_phnum * header->e_phentsize);
+  Elf64_Phdr* phdr = malloc(ehdr->e_phnum * ehdr->e_phentsize);
   
-  if (phdrs == NULL)
+  if (phdr == NULL)
     PANIC("Memory allocation for ELF program headers failed");
 
-  if (fread(phdrs, header->e_phentsize, header->e_phnum, f) != header->e_phnum)
+  if (fread(phdr, ehdr->e_phentsize, ehdr->e_phnum, f) != ehdr->e_phnum)
     PANIC("Failed to read all program headers");
   
-  return phdrs;
+  return phdr;
 }
 
 
 
-const Elf64_Shdr* read_shdrs(const Elf64_Ehdr* header, FILE* f) {
-  fseek(f, header->e_shoff, SEEK_SET);
+const Elf64_Shdr* read_shdr(const Elf64_Ehdr* ehdr, FILE* f) {
+  fseek(f, ehdr->e_shoff, SEEK_SET);
   
-  Elf64_Shdr* shdrs = malloc(header->e_shnum * header->e_shentsize);
+  Elf64_Shdr* shdr = malloc(ehdr->e_shnum * ehdr->e_shentsize);
 
-  if (shdrs == NULL)
+  if (shdr == NULL)
     PANIC("Memory allocation for ELF section headers failed");
 
-  if (fread(shdrs, header->e_shentsize, header->e_shnum, f) != header->e_shnum)
+  if (fread(shdr, ehdr->e_shentsize, ehdr->e_shnum, f) != ehdr->e_shnum)
     PANIC("Failed to read all section headers");
 
-  return shdrs;
+  return shdr;
 }
 
 
@@ -86,48 +80,59 @@ const Elf64_Shdr* read_shdrs(const Elf64_Ehdr* header, FILE* f) {
 
 
 
-static void verify_header(const Elf64_Ehdr* header) {
+static void verify_ehdr(const Elf64_Ehdr* ehdr) {
   
 
-  if (header->e_ident[EI_MAG0] != ELFMAG0 || header->e_ident[EI_MAG1] != ELFMAG1 || 
-      header->e_ident[EI_MAG2] != ELFMAG2 || header->e_ident[EI_MAG3] != ELFMAG3)
+  if (ehdr->e_ident[EI_MAG0] != ELFMAG0 || ehdr->e_ident[EI_MAG1] != ELFMAG1 || 
+      ehdr->e_ident[EI_MAG2] != ELFMAG2 || ehdr->e_ident[EI_MAG3] != ELFMAG3)
     PANIC("Invalid ELF file");
 
-    else if (header->e_ident[EI_CLASS] != ELFCLASS64)
+  else if (ehdr->e_ident[EI_CLASS] != ELFCLASS64)
     PANIC("Unsupported ELF class (must be 64 bit)");
 
-  else if (header->e_ident[EI_DATA] != ELFDATA2LSB)
+  else if (ehdr->e_ident[EI_DATA] != ELFDATA2LSB)
     PANIC("Unsupported ELF byte order (must be little endian)");
 
-  else if (header->e_ident[EI_OSABI] != ELFOSABI_SYSV && header->e_ident[EI_OSABI] != ELFOSABI_LINUX)
+  else if (ehdr->e_ident[EI_OSABI] != ELFOSABI_SYSV && ehdr->e_ident[EI_OSABI] != ELFOSABI_LINUX)
     PANIC("Unsupported ELF OS ABI (must be SYSV/Linux)");
     
-  else if (header->e_type != ET_EXEC && header->e_type != ET_DYN)
+  else if (ehdr->e_type != ET_EXEC && ehdr->e_type != ET_DYN)
     PANIC("Unsupported ELF file type (must be executable)");
   
-  else if (header->e_machine != EM_X86_64)
+  else if (ehdr->e_machine != EM_X86_64)
     PANIC("Unsupported ELF architecture (must be EM_X86_64)");
 
-  else if (header->e_version != EV_CURRENT)
+  else if (ehdr->e_version != EV_CURRENT)
     PANIC("Unsupported ELF version (must be 1)");
 
-  else if (header->e_entry == 0)
+  else if (ehdr->e_entry == 0)
     PANIC("ELF entry point is NULL");
 
-  else if (header->e_ehsize != sizeof(Elf64_Ehdr))
-    PANIC("Invalid ELF header size");
+  else if (ehdr->e_ehsize != sizeof(Elf64_Ehdr))
+    PANIC("Invalid ELF ehdr size");
 
-  else if (header->e_phentsize != sizeof(Elf64_Phdr))
-    PANIC("Invalid program header entry size");
+  else if (ehdr->e_phentsize != sizeof(Elf64_Phdr))
+    PANIC("Invalid program ehdr entry size");
 
-  else if (header->e_shentsize != sizeof(Elf64_Shdr))
+  else if (ehdr->e_shentsize != sizeof(Elf64_Shdr))
     PANIC("Invalid section header entry size");
 
 }
 
 
 
-static void print_header(const Elf64_Ehdr* header) {
+static void verify_shdr(const Elf64_Shdr* shdr) {
+  if (shdr->sh_type == SHN_UNDEF)
+    PANIC("No section type found");
+  
+  else if (shdr->)
+
+}
+
+
+
+
+static void print_ehdr(const Elf64_Ehdr* ehdr) {
   printf(
     "e_ident: %.4s\n"
     "e_type: %u\n"
@@ -144,19 +149,19 @@ static void print_header(const Elf64_Ehdr* header) {
     "e_shnum: %u\n"
     "e_shstrndx: %u\n",
 
-    header->e_ident,
-    header->e_type,
-    header->e_machine,
-    header->e_version,
-    header->e_entry,
-    header->e_phoff,
-    header->e_shoff,
-    header->e_flags,
-    header->e_ehsize,
-    header->e_phentsize,
-    header->e_phnum,
-    header->e_shentsize,
-    header->e_shnum,
-    header->e_shstrndx
+    ehdr->e_ident,
+    ehdr->e_type,
+    ehdr->e_machine,
+    ehdr->e_version,
+    ehdr->e_entry,
+    ehdr->e_phoff,
+    ehdr->e_shoff,
+    ehdr->e_flags,
+    ehdr->e_ehsize,
+    ehdr->e_phentsize,
+    ehdr->e_phnum,
+    ehdr->e_shentsize,
+    ehdr->e_shnum,
+    ehdr->e_shstrndx
   );
 }

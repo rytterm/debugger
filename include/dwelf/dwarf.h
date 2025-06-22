@@ -8,7 +8,6 @@ extern "C" {
 
 
 #include "elf.h"
-#include <dwarf.h>
 
 void dwelf_init(char* fname);
 
