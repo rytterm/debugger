@@ -25,6 +25,7 @@ typedef struct {
 ElfFile* elf_init(char*);
 
 
+/*
 // Read the ELF file header and check
 // that the header is valid for linux x86_64
 const Elf64_Ehdr* read_ehdr(FILE*);
@@ -34,7 +35,7 @@ const Elf64_Phdr* read_phdr(const Elf64_Ehdr*, FILE*);
 
 // Read section headers
 const Elf64_Shdr* read_shdr(const Elf64_Ehdr*, FILE*);
-
+*/
 
 #ifdef __cplusplus
 }

@@ -3,6 +3,17 @@
 #include <stdlib.h>
 
 
+// Define all sh_flags as one constant
+#define SH_FLAGS (SHF_WRITE | SHF_ALLOC | SHF_EXECINSTR | SHF_MERGE | \
+                  SHF_STRINGS | SHF_INFO_LINK | SHF_LINK_ORDER | \
+                  SHF_OS_NONCONFORMING | SHF_GROUP | SHF_TLS | \
+                  SHF_COMPRESSED | SHF_GNU_RETAIN | SHF_ORDERED | SHF_EXCLUDE)
+
+
+
+static        Elf64_Ehdr* read_ehdr(FILE* f);
+static const  Elf64_Phdr* read_phdr(const Elf64_Ehdr* ehdr, FILE* f);
+static const  Elf64_Shdr* read_shdr(Elf64_Ehdr* ehdr, FILE* f);
 
 static void verify_ehdr(const Elf64_Ehdr* ehdr);
 static void print_ehdr(const Elf64_Ehdr* ehdr);
@@ -18,16 +29,17 @@ ElfFile* elf_init(char* fname) {
     PANIC("Could not open file: %s", fname);
 
 
-  const Elf64_Ehdr* ehdr  = read_ehdr(f);
+  Elf64_Ehdr* ehdr  = read_ehdr(f);
   const Elf64_Phdr* phdr   = read_phdr(ehdr, f);
   const Elf64_Shdr* shdr   = read_shdr(ehdr, f);
+
 
 }
 
 
 
 
-const Elf64_Ehdr* read_ehdr(FILE* f) {
+static Elf64_Ehdr* read_ehdr(FILE* f) {
   Elf64_Ehdr* ehdr = malloc(sizeof(Elf64_Ehdr));
   if (ehdr == NULL)
     PANIC("Memory allocation for ELF header failed");
@@ -42,7 +54,7 @@ const Elf64_Ehdr* read_ehdr(FILE* f) {
 
 
 
-const Elf64_Phdr* read_phdr(const Elf64_Ehdr* ehdr, FILE* f) {
+static const Elf64_Phdr* read_phdr(const Elf64_Ehdr* ehdr, FILE* f) {
   fseek(f, ehdr->e_phoff, SEEK_SET);
 
   Elf64_Phdr* phdr = malloc(ehdr->e_phnum * ehdr->e_phentsize);
@@ -58,7 +70,7 @@ const Elf64_Phdr* read_phdr(const Elf64_Ehdr* ehdr, FILE* f) {
 
 
 
-const Elf64_Shdr* read_shdr(const Elf64_Ehdr* ehdr, FILE* f) {
+static const Elf64_Shdr* read_shdr(Elf64_Ehdr* ehdr, FILE* f) {
   fseek(f, ehdr->e_shoff, SEEK_SET);
   
   Elf64_Shdr* shdr = malloc(ehdr->e_shnum * ehdr->e_shentsize);
@@ -69,11 +81,9 @@ const Elf64_Shdr* read_shdr(const Elf64_Ehdr* ehdr, FILE* f) {
   if (fread(shdr, ehdr->e_shentsize, ehdr->e_shnum, f) != ehdr->e_shnum)
     PANIC("Failed to read all section headers");
 
+
   return shdr;
 }
-
-
-
 
 
 
@@ -112,22 +122,27 @@ static void verify_ehdr(const Elf64_Ehdr* ehdr) {
     PANIC("Invalid ELF ehdr size");
 
   else if (ehdr->e_phentsize != sizeof(Elf64_Phdr))
-    PANIC("Invalid program ehdr entry size");
+    PANIC("Invalid program header entry size");
 
   else if (ehdr->e_shentsize != sizeof(Elf64_Shdr))
     PANIC("Invalid section header entry size");
-
 }
 
+
+
+static void verify_phdr(const Elf64_Phdr* phdr) {
+}
 
 
 static void verify_shdr(const Elf64_Shdr* shdr) {
-  if (shdr->sh_type == SHN_UNDEF)
-    PANIC("No section type found");
+  if (shdr->sh_type == SHT_NULL || shdr->sh_type >= SHT_NUM)
+    PANIC("Invalid section header type");
   
-  else if (shdr->)
+  else if (!(shdr->sh_flags & SH_FLAGS))
+    PANIC("Unsupported section flag found");
 
 }
+
 
 
 
